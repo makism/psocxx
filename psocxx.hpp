@@ -16,6 +16,9 @@
 #   include <windows.h>
 #endif
 
+#include "boost/random.hpp" 
+
+#include "helpers/Random.hpp"
 #include "headers/Vector.hpp"
 #include "headers/Particle.hpp"
 #include "headers/Swarm.hpp"
