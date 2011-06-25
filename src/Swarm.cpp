@@ -3,63 +3,57 @@
 
 namespace psocxx {
 
-// Reset id counter.
-long unsigned int Particle::counter = 0;
-
-/*
-* Empty constructor.
-*/
-Particle::Particle(void)
-        : mId(-1),
-          mPosition(0),
-          mVelocity(0)
+Swarm::Swarm(const int& numberOfParticles)
+    : mNumberOfParticles(numberOfParticles),
+      mBestPosition(0),
+      mBoundaryLo(0.0f),
+      mBoundaryHi(0.0f)
 {
-
+    mParticles = new std::vector<Particle*>();
 }
 
-/*
-* Copy constructor.
-*/
-Particle::Particle(const Particle& n)
+Swarm::~Swarm(void)
 {
+    for (int i=0; i<mNumberOfParticles; i++)
+        delete mParticles->at(i);
+    
+    mParticles->clear();
+    delete mParticles;
+    mParticles = 0;
+    
+    delete mBestPosition;
+    delete Helpers::Random::Instance();
 }
 
-/*
-* Create a node with the given position.
-*/
-Particle::Particle(const Vector& position, const Vector& velocity)
-        : mId(Particle::counter++)
+void Swarm::ConfigureSpace(const int& dims, const float& lo, const float& hi)
 {
-    mPosition = new Vector(position);
-    mVelocity = new Vector(velocity);
+    mDimensions = dims;
+    mBoundaryLo = lo;
+    mBoundaryHi = hi;
+    
+    Helpers::Random::Instance(lo, hi);
 }
 
-/*
-* Empty destructor.
-*/
-Particle::~Particle(void)
+void Swarm::SetParameters(const float& omega, const float& phi_p, const float& phi_g)
 {
-    delete mPosition;
-    delete mVelocity;
+    mParamOmega = omega;
+    mParamPhiP = phi_p;
+    mParamPhiG = phi_g;
 }
 
-/*
-*
-*/
-const std::string Particle::ToString(void) const
+void Swarm::Init(void)
 {
-    std::ostringstream oss;
-
-
-    return oss.str();
-}
-
-/*
-*
-*/
-long unsigned int Particle::Id(void) const
-{
-    return mId;
+    for (int i=0; i<mNumberOfParticles; i++) {
+        std::vector<float> points;
+        
+        for (int x=0; x<mDimensions; x++)
+            points.push_back((float)Helpers::Random::Instance()->Generate());
+        
+        Vector position(points);
+        Particle* p = new Particle(position);
+        
+        mParticles->push_back(p);
+    }
 }
 
 }
