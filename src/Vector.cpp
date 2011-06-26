@@ -170,6 +170,22 @@ Vector& Vector::operator *=(const float mult)
     return *this;
 }
 
+Vector& Vector::operator -=(Vector& v)
+{
+    for (int i=0; i<mDimensions; i++)
+        (*mPoints)[i] -= v[i];
+    
+    return *this;
+}
+
+Vector& Vector::operator +=(Vector& v)
+{
+    for (int i=0; i<mDimensions; i++)
+        (*mPoints)[i] += v[i];
+    
+    return *this;
+}
+
 const Vector Vector::One(int dimensions)
 {
     Vector v(dimensions);
