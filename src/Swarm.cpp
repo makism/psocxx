@@ -20,7 +20,6 @@ Swarm::~Swarm(void)
     
     mParticles->clear();
     delete mParticles;
-    mParticles = 0;
     
     delete mBestPosition;
     delete mRand;
@@ -40,6 +39,11 @@ void Swarm::SetParameters(const float& omega, const float& phi_p, const float& p
     mParamOmega = omega;
     mParamPhiP = phi_p;
     mParamPhiG = phi_g;
+}
+
+std::vector<Particle *>* Swarm::Particles(void) const
+{
+    return mParticles;
 }
 
 void Swarm::Init(void)
@@ -62,6 +66,40 @@ void Swarm::Init(void)
         
         mParticles->push_back(p);
     }
+}
+
+void Swarm::Step(void)
+{
+    for (int i=0; i<mNumberOfParticles;i ++) {
+        float Rp = mRand->UniformUnit();
+        float Rg = mRand->UniformUnit();
+        
+        Vector* pos = mParticles->at(i)->Position();
+        Vector* bpos = mParticles->at(i)->BestPosition();
+        Vector* vel = mParticles->at(i)->Velocity();
+        
+        // Update velocity.
+        (*vel) *= mParamOmega;
+        
+        Vector* temp = new Vector(*bpos);
+        (*temp) -= (*pos);
+        (*temp) *= mParamPhiP * Rp;
+        (*vel) += (*temp);
+        
+        Vector* temp2 = new Vector(*mBestPosition);
+        (*temp2) -= (*pos);
+        (*temp2) *= mParamPhiG * Rg;
+        (*vel) += (*temp2);
+    
+        // Update position.
+        (*pos) += (*vel);
+        
+        // Evaluate particle.
+        mParticles->at(i)->Evaluate(true);
+    
+        delete temp;
+        delete temp2;
+   }
 }
 
 }
