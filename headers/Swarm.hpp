@@ -5,6 +5,9 @@
 namespace psocxx {
 
 class Swarm {
+    
+public:
+    friend class Particle;
 
 public:
     Swarm(const int& numberOfParticles);
@@ -30,7 +33,11 @@ protected:
     float mParamPhiP;
     float mParamPhiG;
     
+    float mBestFitness;
     Vector* mBestPosition;
+    
+private:
+    Helpers::Random* mRand;
 };
 
 }
