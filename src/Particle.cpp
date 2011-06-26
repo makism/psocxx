@@ -31,14 +31,66 @@ Particle::~Particle(void)
     delete mBestPosition;
 }
 
-void Particle::Evaluate(void)
+void Particle::Evaluate(bool step)
 {
     float res = EvaluateCallback(mPosition);
     
-    if (res < mParent->mBestFitness) {
-        mParent->mBestFitness = res;
-        mParent->mBestPosition = mPosition;
+    if (step) {
+        float res2 = EvaluateCallback(mBestPosition);
+     
+        if (res < res2) {
+            delete mBestPosition;
+            mBestPosition = new Vector(*mPosition);
+            
+            if (res2 < mParent->mBestFitness) {
+                mParent->mBestFitness = res2;
+                
+                delete mParent->mBestPosition;
+                mParent->mBestPosition = new Vector(*mBestPosition);
+            }
+        }
+    } else {
+        if (mParent->mBestPosition==0) {
+            mParent->mBestFitness = res;
+            
+            delete mParent->mBestPosition;
+            mParent->mBestPosition = new Vector(*mPosition);
+            
+            return;
+        }
+        
+        if (res < mParent->mBestFitness) {
+            mParent->mBestFitness = res;
+            
+            delete mParent->mBestPosition;
+            mParent->mBestPosition = new Vector(*mPosition);
+        }
     }
+}
+
+Vector* Particle::Position(void) const
+{
+    return mPosition;
+}
+
+void Particle::SetPosition(Vector* v)
+{
+    mPosition = v;
+}
+
+Vector* Particle::Velocity(void) const
+{
+    return mVelocity;
+}
+
+void Particle::SetVelocity(Vector* v)
+{
+    mVelocity = v;
+}
+
+Vector* Particle::BestPosition(void) const
+{
+    return mBestPosition;
 }
 
 const std::string Particle::ToString(void) const

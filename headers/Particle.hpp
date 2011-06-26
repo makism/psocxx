@@ -20,7 +20,14 @@ public:
 
     long unsigned int Id(void) const;
     
-    void Evaluate(void);
+    Vector* Position(void) const;
+    void SetPosition(Vector* v);
+    
+    Vector* Velocity(void) const;
+    void SetVelocity(Vector* v);
+    
+    Vector* BestPosition(void) const;
+    void Evaluate(bool step=false);
     
     const std::string ToString(void) const;
 
