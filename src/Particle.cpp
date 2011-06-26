@@ -3,20 +3,16 @@
 
 namespace psocxx {
     
-Particle::Particle(void)
-{
-
-}
-
-
 Particle::Particle(const Vector& position)
-    : mVelocity(0)
+    : mVelocity(0),
+      mParent(0)
 {
     mPosition = new Vector(position);
     mBestPosition = new Vector(position);
 }
 
 Particle::Particle(const Vector& position, const Vector& velocity)
+    : mParent(0)
 {
     mPosition = new Vector(position);
     mVelocity = new Vector(velocity);
@@ -33,6 +29,16 @@ Particle::~Particle(void)
     delete mPosition;
     delete mVelocity;
     delete mBestPosition;
+}
+
+void Particle::Evaluate(void)
+{
+    float res = EvaluateCallback(mPosition);
+    
+    if (res < mParent->mBestFitness) {
+        mParent->mBestFitness = res;
+        mParent->mBestPosition = mPosition;
+    }
 }
 
 const std::string Particle::ToString(void) const

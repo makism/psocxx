@@ -3,16 +3,24 @@
 
 
 namespace psocxx {
+    
+class Swarm;
 
 class Particle {
+    friend class Swarm;
+    
 public:
-    Particle(void);
+    static float EvaluateCallback(const Vector* v);
+    
+public:
     Particle(const Vector& position);
     Particle(const Vector& position, const Vector& velocity);
     Particle(const Particle& n);
     virtual ~Particle(void);
 
     long unsigned int Id(void) const;
+    
+    void Evaluate(void);
     
     const std::string ToString(void) const;
 
@@ -25,6 +33,9 @@ protected:
     
     /*! */
     Vector *mBestPosition;
+    
+    /*! */
+    Swarm *mParent;
 
     /*! */
     long unsigned int mId;
