@@ -2,3 +2,6 @@ A personal implementation of PSO in C++.
 
 This is created for fun and a bit of need.
 It is almost certain that there are more sophisticated and advanced vesions out there...
+
+
+The final goal, is to merge with GeneticSoup and have new templated-framework-like for Memetic Algorithms.
