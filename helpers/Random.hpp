@@ -27,6 +27,7 @@
          public:
              ~Random(void);
              
+             float UniformUnit(void) const;
              float Position(void) const;
              float Velocity(void) const;
              
@@ -41,6 +42,9 @@
              
              boost::uniform_real<> * uniDblUnit;
              boost::variate_generator<boost::minstd_rand&, boost::uniform_real<> > * uniDblGen;
+  
+             boost::uniform_real<> * uniDblUnit_Pos;
+             boost::variate_generator<boost::minstd_rand&, boost::uniform_real<> > * uniDblGen_Pos;
              
              boost::uniform_real<> * uniDblUnit_Vel;
              boost::variate_generator<boost::minstd_rand&, boost::uniform_real<> > * uniDblGen_Vel;
