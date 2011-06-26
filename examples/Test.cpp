@@ -5,7 +5,7 @@ using namespace psocxx;
 namespace psocxx {
     float Particle::EvaluateCallback(const Vector* v)
     {
-        return 0.0f;
+        return Helpers::Random::Instance()->UniformUnit();
     }
 }
 
@@ -18,10 +18,14 @@ int main(int argc, char** arv)
     s->ConfigureSpace(3, 0.5f, 1.5f);
     
     // Pass the parameters (omega, phi_p, phi_g).
-    s->SetParameters(0.0f, 0.0f, 0.0f);
+    s->SetParameters(0.1f, 0.2f, 0.3f);
     
     // Create inital particles.
     s->Init();
+    
+    // Step one iteration.
+    s->Step();
+    
     
     
     delete s;
