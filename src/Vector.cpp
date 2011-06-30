@@ -111,6 +111,11 @@ Vector::~Vector(void)
     delete mPoints;
 }
 
+std::vector<float>* Vector::Points(void) const
+{
+    return mPoints;
+}
+
 float Vector::Magnitude(void)
 {
     if (!mHasCalculatedMagnitude) {
