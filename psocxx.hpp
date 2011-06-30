@@ -23,4 +23,6 @@
 #include "headers/Particle.hpp"
 #include "headers/Swarm.hpp"
 
+#include "helpers/JetColorspace.hpp"
+
 #endif
