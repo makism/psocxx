@@ -5,14 +5,16 @@ namespace psocxx {
     
 Particle::Particle(const Vector& position)
     : mVelocity(0),
-      mParent(0)
+      mParent(0),
+      mFitness(0.0f)
 {
     mPosition = new Vector(position);
     mBestPosition = new Vector(position);
 }
 
 Particle::Particle(const Vector& position, const Vector& velocity)
-    : mParent(0)
+    : mParent(0),
+      mFitness(0.0f)
 {
     mPosition = new Vector(position);
     mVelocity = new Vector(velocity);
@@ -34,6 +36,8 @@ Particle::~Particle(void)
 void Particle::Evaluate(bool step)
 {
     float res = EvaluateCallback(mPosition);
+    
+    mFitness = res;
     
     if (step) {
         float res2 = EvaluateCallback(mBestPosition);
@@ -91,6 +95,11 @@ void Particle::SetVelocity(Vector* v)
 Vector* Particle::BestPosition(void) const
 {
     return mBestPosition;
+}
+
+float Particle::Fitness(void) const
+{
+    return mFitness;
 }
 
 const std::string Particle::ToString(void) const

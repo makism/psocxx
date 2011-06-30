@@ -29,6 +29,8 @@ public:
     Vector* BestPosition(void) const;
     void Evaluate(bool step=false);
     
+    float Fitness(void) const;
+    
     const std::string ToString(void) const;
 
 protected:
@@ -47,6 +49,9 @@ protected:
     /*! */
     long unsigned int mId;
 
+    /*! */
+    float mFitness;
+    
     /*! */
     static long unsigned int counter;
 };
