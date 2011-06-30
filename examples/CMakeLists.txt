@@ -1,2 +1,2 @@
-add_executable(test Test.cpp)
-target_link_libraries(test PSOCXX  ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
+add_executable(DeJong DeJong.cpp camera.cpp)
+target_link_libraries(DeJong PSOCXX  ${GLUT_LIBRARY} ${OPENGL_LIBRARY})
