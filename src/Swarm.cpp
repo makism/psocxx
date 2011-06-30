@@ -46,6 +46,11 @@ std::vector<Particle *>* Swarm::Particles(void) const
     return mParticles;
 }
 
+int Swarm::NumberOfParticles(void) const
+{
+    return mNumberOfParticles;
+}
+
 void Swarm::Init(void)
 {
     for (int i=0; i<mNumberOfParticles; i++) {

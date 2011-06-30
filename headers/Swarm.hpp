@@ -22,6 +22,8 @@ public:
     
     Vector* BestPosition() const;
     void SetBestPosition(const Vector& position);
+    
+    int NumberOfParticles(void) const;
 
 protected:
     std::vector<Particle *>* mParticles;
