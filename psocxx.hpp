@@ -3,6 +3,7 @@
 
 #include <math.h>
 #include <vector>
+#include <deque>
 #include <numeric>
 #include <string>
 #include <iostream>
