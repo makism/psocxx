@@ -149,7 +149,7 @@ void DrawGLScene()
     }
     glEnd();
     glFinish();
-
+    
 
     glPointSize(2.0);
     glBegin(GL_POINTS);
@@ -158,6 +158,15 @@ void DrawGLScene()
 
         glColor3f (1.0f, 1.0f, 1.0f);
         glVertex3f(p->Position()->Points()->at(0), p->Fitness(), p->Position()->Points()->at(1));
+        
+        glBegin(GL_LINES);
+        glVertex3f(p->Position()->Points()->at(0), p->Fitness(), p->Position()->Points()->at(1));
+        for (int t=0; t<p->Tail()->size(); t++) {
+            Vector* v = p->Tail()->at(t);
+            glVertex3f(v->Points()->at(0), v->Points()->at(1), v->Points()->at(2));
+        }
+        glEnd();
+        glFinish();
     }
     glEnd();
     glFinish();
@@ -251,7 +260,7 @@ int main(int argc, char** argv)
     window = glutCreateWindow("psocxx");
 
     glutDisplayFunc(&DrawGLScene);
-    glutFullScreen();
+//     glutFullScreen();
     glutIdleFunc(&DrawGLScene);
     glutReshapeFunc(&ReSizeGLScene);
     glutKeyboardFunc(&keyPressed);
