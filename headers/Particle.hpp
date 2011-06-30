@@ -31,6 +31,8 @@ public:
     
     float Fitness(void) const;
     
+    std::deque<Vector*> * Tail();
+    
     const std::string ToString(void) const;
 
 protected:
@@ -51,6 +53,9 @@ protected:
 
     /*! */
     float mFitness;
+    
+    /*! */
+    std::deque<Vector*> *mTail;
     
     /*! */
     static long unsigned int counter;
