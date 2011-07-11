@@ -24,7 +24,8 @@ public:
     void SetBestPosition(const Vector& position);
     
     int NumberOfParticles(void) const;
-
+    bool HasInited(void) const;
+    
 protected:
     std::vector<Particle *>* mParticles;
     
@@ -40,6 +41,8 @@ protected:
     
     float mBestFitness;
     Vector* mBestPosition;
+    
+    bool mHasInited;
     
 private:
     Helpers::Random* mRand;
