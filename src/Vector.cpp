@@ -127,6 +127,11 @@ float Vector::Magnitude(void)
     return mMagnitude;
 }
 
+int Vector::Dimensions(void) const
+{
+    return mDimensions;
+}
+
 void Vector::Normalize(void)
 {
     if (!mIsNormalized)
