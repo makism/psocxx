@@ -8,7 +8,8 @@ Swarm::Swarm(const int& numberOfParticles)
       mBestPosition(0),
       mBoundaryLo(0.0f),
       mBoundaryHi(0.0f),
-      mRand(0)
+      mRand(0),
+      mHasInited(false)
 {
     mParticles = new std::vector<Particle*>();
 }
@@ -57,8 +58,7 @@ void Swarm::Init(void)
         std::vector<float> points;
         std::vector<float> v_points;
         
-        for (int x=0; x<mDimensions; x++)
-        {
+        for (int x=0; x<mDimensions; x++) {
             points.push_back(mRand->Position());
             v_points.push_back(mRand->Velocity());
         }
@@ -71,6 +71,18 @@ void Swarm::Init(void)
         
         mParticles->push_back(p);
     }
+    
+    mHasInited = true;
+}
+
+bool Swarm::HasInited(void) const
+{
+    return mHasInited;
+}
+
+Vector* Swarm::BestPosition(void) const
+{
+    return mBestPosition;
 }
 
 void Swarm::Step(void)
