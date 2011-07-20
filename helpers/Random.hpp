@@ -1,5 +1,5 @@
- #ifndef _GENETICSOUP_HELPERS_RANDOM_HPP_
- #define _GENETICSOUP_HELPERS_RANDOM_HPP_
+ #ifndef _PSOCXX_HELPERS_RANDOM_HPP_
+ #define _PSOCXX_HELPERS_RANDOM_HPP_
  
  #ifdef unix
  #   include <fstream>
