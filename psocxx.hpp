@@ -17,13 +17,18 @@
 #   include <windows.h>
 #endif
 
-#include "boost/random.hpp" 
+#include <boost/foreach.hpp>
+#include <boost/numeric/ublas/vector.hpp>
+typedef boost::numeric::ublas::vector<float> vecf;
+typedef boost::numeric::ublas::zero_vector<float> zero_vecf;
 
-#include "helpers/Random.hpp"
-#include "headers/Vector.hpp"
-#include "headers/Particle.hpp"
-#include "headers/Swarm.hpp"
+std::ostream & operator<< (std::ostream & os, const vecf & vector);
 
-#include "helpers/JetColorspace.hpp"
+
+#include "src/helpers/Random.hpp"
+#include "src/Particle.hpp"
+#include "src/Swarm.hpp"
+
+//#include "src/helpers/JetColorspace.hpp"
 
 #endif
