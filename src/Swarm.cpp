@@ -3,120 +3,106 @@
 
 namespace psocxx {
 
-Swarm::Swarm(const int& numberOfParticles)
-    : mNumberOfParticles(numberOfParticles),
-      mBestPosition(0),
-      mBoundaryLo(0.0f),
-      mBoundaryHi(0.0f),
-      mRand(0),
-      mHasInited(false)
+Swarm::Swarm(unsigned int numberOfParticles)
+    : m_numParticles(numberOfParticles),
+      m_bestFitness(INFINITY)
 {
-    mParticles = new std::vector<Particle*>();
 }
 
-Swarm::~Swarm(void)
+Swarm::~Swarm()
 {
-    for (int i=0; i<mNumberOfParticles; i++)
-        delete mParticles->at(i);
-    
-    mParticles->clear();
-    delete mParticles;
-    
-    delete mBestPosition;
-    delete mRand;
+    delete m_rand;
 }
 
-void Swarm::ConfigureSpace(const int& dims, const float& lo, const float& hi)
+void Swarm::configureSpace(unsigned int dims, float lo, float hi)
 {
-    mDimensions = dims;
-    mBoundaryLo = lo;
-    mBoundaryHi = hi;
-    
-    mRand = Helpers::Random::Instance(lo, hi);
+    m_dimensions = dims;
+    m_boundLower = lo;
+    m_boundUpper = hi;
+
+    m_rand = Helpers::Random::Instance(lo, hi);
 }
 
-void Swarm::SetParameters(const float& omega, const float& phi_p, const float& phi_g)
+void Swarm::setParameters(float omega, float phi_p, float phi_g)
 {
-    mParamOmega = omega;
-    mParamPhiP = phi_p;
-    mParamPhiG = phi_g;
+    m_omega = omega;
+    m_phiP = phi_p;
+    m_phiG = phi_g;
 }
 
-std::vector<Particle *>* Swarm::Particles(void) const
+void Swarm::setFitnessCallback(boost::function<float (const vecf&)> callback)
 {
-    return mParticles;
+    m_fitnessCallback = callback;
 }
 
-int Swarm::NumberOfParticles(void) const
+void Swarm::init()
 {
-    return mNumberOfParticles;
-}
+    for (unsigned int i=0; i<m_numParticles; ++i) {
+        vecf points(m_dimensions);
+        vecf v_points(m_dimensions);
 
-void Swarm::Init(void)
-{
-    for (int i=0; i<mNumberOfParticles; i++) {
-        std::vector<float> points;
-        std::vector<float> v_points;
-        
-        for (int x=0; x<mDimensions; x++) {
-            points.push_back(mRand->Position());
-            v_points.push_back(mRand->Velocity());
+        for (unsigned int d=0; d<m_dimensions; ++d) {
+            points[d] = m_rand->Position();
+            v_points[d] = m_rand->Velocity();
         }
-        
-        Vector position(points);
-        Vector velocity(v_points);
-        Particle* p = new Particle(position, velocity);
-        p->mParent = this;
-        p->Evaluate();
-        
-        mParticles->push_back(p);
+
+        Particle p(points, v_points);
+        p.m_parent = this;
+        p.evaluate(false);
+
+        m_particles.push_back(p);
     }
-    
-    mHasInited = true;
 }
 
-bool Swarm::HasInited(void) const
+void Swarm::step()
 {
-    return mHasInited;
-}
+    BOOST_FOREACH(Particle & particle, m_particles) {
+        float Rp = m_rand->UniformUnit();
+        float Rg = m_rand->UniformUnit();
 
-Vector* Swarm::BestPosition(void) const
-{
-    return mBestPosition;
-}
+        vecf& pos = particle.position();
+        vecf& bpos = particle.bestPosition();
+        vecf& vel = particle.velocity();
 
-void Swarm::Step(void)
-{
-    for (int i=0; i<mNumberOfParticles;i ++) {
-        float Rp = mRand->UniformUnit();
-        float Rg = mRand->UniformUnit();
-        
-        Vector* pos = mParticles->at(i)->Position();
-        Vector* bpos = mParticles->at(i)->BestPosition();
-        Vector* vel = mParticles->at(i)->Velocity();
-        
         // Update velocity.
-        (*vel) *= mParamOmega;
-        
-        Vector* temp = new Vector(*bpos);
-        (*temp) -= (*pos);
-        (*temp) *= mParamPhiP * Rp;
-        (*vel) += (*temp);
-        
-        Vector* temp2 = new Vector(*mBestPosition);
-        (*temp2) -= (*pos);
-        (*temp2) *= mParamPhiG * Rg;
-        (*vel) += (*temp2);
-    
+        vel *= m_omega;
+
+        vecf temp = bpos;
+        temp -= pos;
+        temp *= m_phiP * Rp;
+        vel += temp;
+
+        vecf temp2 = m_bestPosition;
+        temp2 -= pos;
+        temp2 *= m_phiG * Rg;
+        vel += temp2;
+
         // Update position.
-        (*pos) += (*vel);
-        
+        pos += vel;
+
         // Evaluate particle.
-        mParticles->at(i)->Evaluate(true);
-    
-        delete temp;
-        delete temp2;
-   }
+        particle.evaluate(true);
+    }
+}
+
+unsigned int Swarm::numberOfParticles()
+{
+    return m_numParticles;
+}
+
+std::vector<Particle>& Swarm::particles()
+{
+    return m_particles;
+}
+
+const vecf& Swarm::bestPosition() const
+{
+    return m_bestPosition;
+}
+
+float Swarm::bestFitness() const
+{
+    return m_bestFitness;
 }
 
 }
