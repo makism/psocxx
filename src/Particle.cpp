@@ -2,152 +2,90 @@
 
 
 namespace psocxx {
-    
-Particle::Particle(const Vector& position)
-    : mVelocity(0),
-      mParent(0),
-      mTail(0),
-      mFitness(0.0f)
+
+unsigned long int Particle::COUNTER = 0;
+
+Particle::Particle(const vecf& position)
+    : m_position(position),
+      m_bestPosition(position),
+      m_velocity(zero_vecf(position.size())),
+      m_parent(0),
+      m_fitness(0.0f),
+      m_id(COUNTER++)
 {
-    mTail = new std::deque<Vector*>();
-    mPosition = new Vector(position);
-    mBestPosition = new Vector(position);
 }
 
-Particle::Particle(const Vector& position, const Vector& velocity)
-    : mParent(0),
-      mFitness(0.0f)
+Particle::Particle(const vecf& position, const vecf& velocity)
+    : m_position(position),
+      m_bestPosition(position),
+      m_velocity(velocity),
+      m_parent(0),
+      m_fitness(0.0f),
+      m_id(COUNTER++)
 {
-    mTail = new std::deque<Vector*>();
-    mPosition = new Vector(position);
-    mVelocity = new Vector(velocity);
-    mBestPosition = new Vector(position);
 }
 
-Particle::Particle(const Particle& n)
+void Particle::evaluate(bool step)
 {
-    
-}
+    m_fitness = m_parent->m_fitnessCallback(m_position);
 
-Particle::~Particle(void)
-{
-    delete mPosition;
-    delete mVelocity;
-    delete mBestPosition;
-    
-    for (int i=0; i<mTail->size(); i++)
-        delete mTail->at(i);
-    mTail->clear();
-    delete mTail;
-}
-
-void Particle::Evaluate(bool step)
-{
-    float res = EvaluateCallback(mPosition);
-    mFitness = res;
-    
-    
-    if (mTail->size() >= 10) {
-        delete mTail->back();
-        mTail->pop_back();
-    }
-    
-    if (mTail->size() < 10)
-    {
-        float* points = new float[3];
-        points[0] = mPosition->Points()->at(0);
-        points[1] = mFitness;
-        points[2] = mPosition->Points()->at(1);
-        
-        Vector* oldVector = new Vector(points[0], points[1], points[2]);
-        mTail->push_front(oldVector);
-        
-        delete points;
-    }
-    
- 
+    // Actual evaluation
     if (step) {
-        float res2 = EvaluateCallback(mBestPosition);
-     
-        if (res < res2) {
-            delete mBestPosition;
-            mBestPosition = new Vector(*mPosition);
-            
-            if (res2 < mParent->mBestFitness) {
-                mParent->mBestFitness = res2;
-                
-                delete mParent->mBestPosition;
-                mParent->mBestPosition = new Vector(*mBestPosition);
+        float res2 = m_parent->m_fitnessCallback(m_bestPosition);
+
+        if (m_fitness < res2) {
+            m_bestPosition = m_position;
+
+            if (res2 < m_parent->m_bestFitness) {
+                m_parent->m_bestFitness = res2;
+                m_parent->m_bestPosition = m_bestPosition;
             }
         }
     } else {
-        if (mParent->mBestPosition==0) {
-            mParent->mBestFitness = res;
-            
-            delete mParent->mBestPosition;
-            mParent->mBestPosition = new Vector(*mPosition);
-            
-            return;
-        }
-        
-        if (res < mParent->mBestFitness) {
-            mParent->mBestFitness = res;
-            
-            delete mParent->mBestPosition;
-            mParent->mBestPosition = new Vector(*mPosition);
+        if (m_parent->m_bestPosition.empty() ||
+            m_fitness < m_parent->m_bestFitness) {
+            m_parent->m_bestFitness = m_fitness;
+            m_parent->m_bestPosition = m_position;
         }
     }
 }
 
-Vector* Particle::Position(void) const
+unsigned long Particle::id() const
 {
-    return mPosition;
+    return m_id;
 }
 
-void Particle::SetPosition(Vector* v)
+float Particle::fitness() const
 {
-    mPosition = v;
+    return m_fitness;
 }
 
-Vector* Particle::Velocity(void) const
+vecf& Particle::position()
 {
-    return mVelocity;
+    return m_position;
 }
 
-void Particle::SetVelocity(Vector* v)
+vecf& Particle::bestPosition()
 {
-    mVelocity = v;
+    return m_bestPosition;
 }
 
-Vector* Particle::BestPosition(void) const
+vecf& Particle::velocity()
 {
-    return mBestPosition;
+    return m_velocity;
 }
 
-float Particle::Fitness(void) const
-{
-    return mFitness;
-}
-
-std::deque<Vector*> * Particle::Tail(void)
-{
-    return mTail;
-}
-
-const std::string Particle::ToString(void) const
+const std::string Particle::toString() const
 {
     std::ostringstream oss;
-    
-    oss << "Particle: Position(" << mPosition->ToString() << ")";
-    
-    if (mVelocity!=0)
-        oss << ", Velocity(" << mVelocity->ToString() << ")";
-    
-    if (mBestPosition!=0)
-        oss << ", Best Position(" << mBestPosition->ToString() << ")";
-    
+
+    oss << "Position: " << m_position;
+    oss << ", ";
+    oss << "Velocity: " << m_velocity;
+    oss << ", ";
+    oss << "Best Position: " << m_bestPosition;
+
     return oss.str();
 }
-
 
 }

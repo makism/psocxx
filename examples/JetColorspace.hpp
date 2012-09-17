@@ -1,9 +1,6 @@
 #ifndef _JETCOLORSPACE_HPP_
 #define _JETCOLORSPACE_HPP_
 
-namespace psocxx {
-    namespace Helpers {
-        
         class JetColorspace {
             
         public:
@@ -44,7 +41,4 @@ namespace psocxx {
             
         };
         
-    }
-}
-
 #endif
